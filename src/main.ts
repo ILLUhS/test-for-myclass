@@ -1,5 +1,5 @@
 import { app, port } from './app';
-import { runDB } from './database';
+import { runDB } from './infrastructure/database';
 
 const bootstrap = async (): Promise<void> => {
   try {
