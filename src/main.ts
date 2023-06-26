@@ -1,14 +1,14 @@
 import { app, port } from './app';
-import { Client } from 'pg';
+import { runDB } from './database';
 
 const bootstrap = async (): Promise<void> => {
-  const connectionString = '';
-  const client = new Client({
-    connectionString,
-  });
-  await client.connect();
-  app.listen(port, () => {
-    console.log(`app listening on port ${port}`);
-  });
+  try {
+    await runDB();
+    app.listen(port, () => {
+      console.log(`app listening on port ${port}`);
+    });
+  } catch (e) {
+    console.log(e);
+  }
 };
 bootstrap();
