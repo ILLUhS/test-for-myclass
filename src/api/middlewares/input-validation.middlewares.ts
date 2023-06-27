@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { validationResult } from 'express-validator';
+import { Result, validationResult } from 'express-validator';
 
 export type ErrorsMessagesType = {
   message: string;
@@ -33,14 +33,15 @@ export const errorsValidation = (
   res: Response,
   next: NextFunction,
 ) => {
+  const result: Result = validationResult(req);
   for (
     let i = 0;
     i < validationResult(req).array({ onlyFirstError: true }).length;
     i++
   ) {
     errors.errorsMessages.push({
-      message: validationResult(req).array({ onlyFirstError: true })[i].msg,
-      field: validationResult(req).array({ onlyFirstError: true })[i].type,
+      message: result.array({ onlyFirstError: true })[i].msg,
+      field: result.array({ onlyFirstError: true })[i].path,
     });
   }
   if (errors.errorsMessages.length) {
