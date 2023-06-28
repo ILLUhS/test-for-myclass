@@ -24,7 +24,27 @@ export const checkLessonsCountOrLastDate = async (
       message: "lastDate and lessonsCount can't be together",
       field: 'lessonsCount and lastDate',
     });
-    //throw new Error("lastDate and lessonsCount can't be together");
+  } else if (!lessonsCount && !lastDate) {
+    errors.errorsMessages.push({
+      message: 'lastDate or lessonsCount must be',
+      field: 'lessonsCount and lastDate',
+    });
+  } else if (lessonsCount) {
+    const result = Number(lessonsCount);
+    if (isNaN(result) || result > 300 || result < 1)
+      errors.errorsMessages.push({
+        message: 'lessonsCount must be number 0..300',
+        field: 'lessonsCount',
+      });
+    req.body.lessonsCount = result;
+  } else if (lastDate) {
+    const result = Date.parse(lastDate);
+    if (isNaN(result) || result < Date.now())
+      errors.errorsMessages.push({
+        message: 'lastDate must be Date',
+        field: 'lastDate',
+      });
+    req.body.lastDate = result;
   }
   return next();
 };
