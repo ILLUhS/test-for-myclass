@@ -41,7 +41,7 @@ export const checkLessonsCountOrLastDate = async (
         message: 'lessonsCount must be number 0..300',
         field: 'lessonsCount',
       });
-    req.body.lessonsCount = result;
+    req.body.lessonsCount = new Date(result);
   } else if (lastDate) {
     const result = Date.parse(lastDate);
     if (isNaN(result) || result < Date.now())
@@ -49,7 +49,7 @@ export const checkLessonsCountOrLastDate = async (
         message: 'lastDate must be Date',
         field: 'lastDate',
       });
-    req.body.lastDate = result;
+    req.body.lastDate = new Date(result);
   }
   return next();
 };
@@ -76,7 +76,7 @@ export const checkFirstDate = async (
       message: 'firstDate must be Date',
       field: 'firstDate',
     });
-  req.body.firstDate = result;
+  req.body.firstDate = new Date(result);
   return next();
 };
 
