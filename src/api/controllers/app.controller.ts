@@ -1,8 +1,10 @@
 import { Request, Response, Router } from 'express';
 import {
+  checkDays,
   checkLessonsCountOrLastDate,
+  checkTeachersId,
+  checkTitle,
   errorsValidation,
-  teachersIdIsValid,
 } from '../middlewares/input-validation.middlewares';
 
 export const appRouter = Router({});
@@ -12,7 +14,9 @@ appRouter.get('/', async (req: Request, res: Response) => {
 });
 appRouter.post(
   '/lessons',
-  teachersIdIsValid,
+  checkTeachersId,
+  checkTitle,
+  checkDays,
   /*body(['lessonsCount', 'lastDate']).notEmpty(),*/
   checkLessonsCountOrLastDate,
   errorsValidation,

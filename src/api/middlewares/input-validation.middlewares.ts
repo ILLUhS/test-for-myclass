@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { body, Result, validationResult } from 'express-validator';
+import {
+  body,
+  CustomValidator,
+  Result,
+  validationResult,
+} from 'express-validator';
 
 export type ErrorsMessagesType = {
   message: string;
@@ -48,8 +53,26 @@ export const checkLessonsCountOrLastDate = async (
   }
   return next();
 };
+const checkDaysValues: CustomValidator = async (days: number[]) => {
+  const arr = [0, 1, 2, 3, 4, 5, 6];
+  let exist = true;
+  let i = 0;
+  while (exist && i < days.length) {
+    exist = arr.includes(days[i]);
+    i++;
+  }
+  if (exist && days.length === new Set(days).size) return true;
+  else throw new Error('Days values is not uniq');
+};
 
-export const teachersIdIsValid = body('teachersId').isArray({ min: 1, max: 5 });
+export const checkTeachersId = body('teachersId').isArray({ min: 1, max: 5 });
+export const checkTitle = body('title')
+  .trim()
+  .isString()
+  .isLength({ min: 1, max: 100 });
+export const checkDays = body('days')
+  .isArray({ min: 1, max: 7 })
+  .custom(checkDaysValues);
 export const errorsValidation = (
   req: Request,
   res: Response,
