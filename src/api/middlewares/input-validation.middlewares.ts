@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Result, validationResult } from 'express-validator';
+import { body, Result, validationResult } from 'express-validator';
 
 export type ErrorsMessagesType = {
   message: string;
@@ -48,6 +48,8 @@ export const checkLessonsCountOrLastDate = async (
   }
   return next();
 };
+
+export const teachersIdIsValid = body('teachersId').isArray({ min: 1, max: 5 });
 export const errorsValidation = (
   req: Request,
   res: Response,
