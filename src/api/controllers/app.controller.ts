@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import {
   checkDays,
+  checkFirstDate,
   checkLessonsCountOrLastDate,
   checkTeachersId,
   checkTitle,
@@ -17,10 +18,12 @@ appRouter.post(
   checkTeachersId,
   checkTitle,
   checkDays,
+  checkFirstDate,
   /*body(['lessonsCount', 'lastDate']).notEmpty(),*/
   checkLessonsCountOrLastDate,
   errorsValidation,
   async (req: Request, res: Response) => {
+    console.log(req.body.firstDate);
     return res.sendStatus(201);
   },
 );

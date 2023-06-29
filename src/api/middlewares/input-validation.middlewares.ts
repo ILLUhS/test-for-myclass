@@ -64,6 +64,21 @@ const checkDaysValues: CustomValidator = async (days: number[]) => {
   if (exist && days.length === new Set(days).size) return true;
   else throw new Error('Days values is not uniq');
 };
+export const checkFirstDate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const firstDate = req.body.firstDate || null;
+  const result = Date.parse(firstDate);
+  if (isNaN(result) || result < Date.now())
+    errors.errorsMessages.push({
+      message: 'firstDate must be Date',
+      field: 'firstDate',
+    });
+  req.body.firstDate = result;
+  return next();
+};
 
 export const checkTeachersId = body('teachersId').isArray({ min: 1, max: 5 });
 export const checkTitle = body('title')
@@ -73,6 +88,10 @@ export const checkTitle = body('title')
 export const checkDays = body('days')
   .isArray({ min: 1, max: 7 })
   .custom(checkDaysValues);
+/*export const checkFirstDate = body('firstDate')
+  .trim()
+  .isDate({ format: 'YYYY-MM-DD' })
+  .toDate();*/
 export const errorsValidation = (
   req: Request,
   res: Response,
