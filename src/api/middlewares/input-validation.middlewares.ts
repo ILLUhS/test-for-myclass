@@ -80,7 +80,9 @@ export const checkFirstDate = async (
   return next();
 };
 
-export const checkTeachersId = body('teachersId').isArray({ min: 1, max: 5 });
+export const checkTeachersId = body('teachersId')
+  .isArray({ min: 1, max: 5 })
+  .isNumeric();
 export const checkTitle = body('title')
   .trim()
   .isString()

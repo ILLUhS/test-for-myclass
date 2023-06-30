@@ -19,7 +19,6 @@ appRouter.post(
   checkTitle,
   checkDays,
   checkFirstDate,
-  /*body(['lessonsCount', 'lastDate']).notEmpty(),*/
   checkLessonsCountOrLastDate,
   errorsValidation,
   async (req: Request, res: Response) => {
