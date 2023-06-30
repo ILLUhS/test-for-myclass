@@ -5,14 +5,7 @@ import {
   Result,
   validationResult,
 } from 'express-validator';
-
-export type ErrorsMessagesType = {
-  message: string;
-  field: string;
-};
-export type ErrorsType = {
-  errorsMessages: ErrorsMessagesType[];
-};
+import { ErrorsType } from '../../types';
 
 const errors: ErrorsType = { errorsMessages: [] };
 export const checkLessonsCountOrLastDate = async (
@@ -80,7 +73,7 @@ export const checkFirstDate = async (
   return next();
 };
 
-export const checkTeachersId = body('teachersId')
+export const checkTeacherIds = body('teacherIds')
   .isArray({ min: 1, max: 5 })
   .isNumeric();
 export const checkTitle = body('title')

@@ -3,7 +3,7 @@ import {
   checkDays,
   checkFirstDate,
   checkLessonsCountOrLastDate,
-  checkTeachersId,
+  checkTeacherIds,
   checkTitle,
   errorsValidation,
 } from '../middlewares/input-validation.middlewares';
@@ -15,7 +15,7 @@ appRouter.get('/', async (req: Request, res: Response) => {
 });
 appRouter.post(
   '/lessons',
-  checkTeachersId,
+  checkTeacherIds,
   checkTitle,
   checkDays,
   checkFirstDate,

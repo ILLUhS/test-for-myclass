@@ -39,7 +39,7 @@ export class AppCommandRepo {
     );
     await client.query(query);
   }
-  async updateStudentToLesson(
+  async updateStudentVisitToLesson(
     lessonId: number,
     studentId: number,
     visit: 0 | 1,
@@ -53,5 +53,16 @@ export class AppCommandRepo {
       visit,
     );
     await client.query(query);
+  }
+  async findTeacherById(id: number) {
+    const query = format(
+      `SELECT id, name
+            FROM public.teachers
+            WHERE id=%L;`,
+      id,
+    );
+    const result = await client.query(query);
+    console.log(result);
+    return result;
   }
 }
