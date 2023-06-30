@@ -15,8 +15,6 @@ export const checkLessonsCountOrLastDate = async (
 ) => {
   const lessonsCount = req.body.lessonsCount || null;
   const lastDate = req.body.lastDate || null;
-  console.log(lessonsCount);
-  console.log(lastDate);
   if (lessonsCount && lastDate) {
     errors.errorsMessages.push({
       message: "lastDate and lessonsCount can't be together",

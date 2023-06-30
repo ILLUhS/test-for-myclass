@@ -62,7 +62,8 @@ export class AppCommandRepo {
       id,
     );
     const result = await client.query(query);
-    console.log(result);
-    return result;
+    if (result.rowCount < 1) return null;
+    console.log(result.rows);
+    return result.rows;
   }
 }

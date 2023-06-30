@@ -9,7 +9,7 @@ export type LessonCreateDto = {
   teacherIds: number[];
   title: string;
   days: number[];
-  firstDate: string;
+  firstDate: Date;
   lessonsCount?: number;
-  lastDate?: string;
+  lastDate?: Date;
 };
