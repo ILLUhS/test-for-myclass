@@ -90,10 +90,6 @@ export const checkTitle = body('title')
 export const checkDays = body('days')
   .isArray({ min: 1, max: 7 })
   .custom(checkDaysValues);
-/*export const checkFirstDate = body('firstDate')
-  .trim()
-  .isDate({ format: 'YYYY-MM-DD' })
-  .toDate();*/
 export const errorsValidation = (
   req: Request,
   res: Response,
