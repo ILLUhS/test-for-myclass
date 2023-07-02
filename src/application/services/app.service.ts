@@ -17,23 +17,12 @@ export class AppService {
       i++;
     } while (teacher && i < teacherIds.length);
     if (!teacher) return null;
-    //проверка, что все указанные дни недели укладываются в интервал
     if (lastDate) {
-      if (lastDate < firstDate) return null;
-      const daysTemp = [...days];
-      for (let i = 0; i < daysTemp.length; i++) {
-        if (daysTemp[i] < firstDate.getDay())
-          daysTemp[i] = daysTemp[i] + 7 - firstDate.getDay();
-        else if (daysTemp[i] >= firstDate.getDay())
-          daysTemp[i] = daysTemp[i] - firstDate.getDay();
-      }
-      daysTemp.sort();
-      const interval = daysTemp[daysTemp.length - 1];
+      //проверка, что все указанные дни недели укладываются в интервал
       if (
-        !isWithinInterval(add(firstDate, { days: interval }), {
-          start: firstDate,
-          end: lastDate,
-        })
+        !this.checkIntervalBetweenFirstAndLastDate(firstDate, lastDate, [
+          ...days,
+        ])
       )
         return null;
       if (lastDate > add(firstDate, { years: 1 }))
@@ -51,7 +40,20 @@ export class AppService {
         count,
       )
     ) {
-      if (days.includes(date.getDay())) console.log(date);
+      if (days.includes(date.getDay())) {
+        console.log(date);
+        const lessonId = (
+          await this.appCommandRepo.createLesson(title, 0, date)
+        ).id;
+        console.log(lessonId);
+        for (let i = 0; i < teacherIds.length; i++)
+          console.log(
+            await this.appCommandRepo.addTeacherToLesson(
+              lessonId,
+              teacherIds[i],
+            ),
+          );
+      }
       date = add(date, { days: 1 });
       count++;
     }
@@ -66,5 +68,24 @@ export class AppService {
     if (lastDate)
       return date <= lastDate && currentCount <= 300 && date <= dateLimit;
     else if (lessonsCount) return currentCount <= 300 && date <= dateLimit;
+  }
+  checkIntervalBetweenFirstAndLastDate(
+    firstDate: Date,
+    lastDate: Date,
+    days: number[],
+  ) {
+    if (lastDate < firstDate) return false;
+    for (let i = 0; i < days.length; i++) {
+      if (days[i] < firstDate.getDay())
+        days[i] = days[i] + 7 - firstDate.getDay();
+      else if (days[i] >= firstDate.getDay())
+        days[i] = days[i] - firstDate.getDay();
+    }
+    days.sort();
+    const interval = days[days.length - 1];
+    return isWithinInterval(add(firstDate, { days: interval }), {
+      start: firstDate,
+      end: lastDate,
+    });
   }
 }

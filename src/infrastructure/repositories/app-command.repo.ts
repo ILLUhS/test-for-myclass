@@ -7,7 +7,7 @@ export class AppCommandRepo {
   async createStudent(name: string) {
     const query = format(
       `INSERT INTO public.students(name)
-    VALUES (%s1) RETURNING "id";`,
+    VALUES (%L)) RETURNING "id";`,
       name,
     );
     return client.query(query);
@@ -18,26 +18,36 @@ export class AppCommandRepo {
             VALUES (%L) RETURNING "id";`,
       name,
     );
-    return client.query(query);
+    return (await client.query(query)).rows[0];
+  }
+  async createLesson(title: string, status: 0 | 1, date_lesson: Date) {
+    const query = format(
+      `INSERT INTO public.lessons(title, status, date_lesson)
+            VALUES (%1$L, %2$L, %3$L) RETURNING "id";`,
+      title,
+      status,
+      date_lesson,
+    );
+    return (await client.query(query)).rows[0];
   }
   async addStudentToLesson(lessonId: number, studentId: number, visit: 0 | 1) {
     const query = format(
       `INSERT INTO public.lesson_sudents(lesson_id,student_id)
-            VALUES (%1$L, %2$L, %3$L));`,
+            VALUES (%1$L, %2$L, %3$L) RETURNING "id";`,
       lessonId,
       studentId,
       visit,
     );
-    await client.query(query);
+    return (await client.query(query)).rows[0];
   }
   async addTeacherToLesson(lessonId: number, teacherId: number) {
     const query = format(
-      `INSERT INTO public.lesson_teachers(lesson_id,student_id, visit)
-            VALUES (%1$L, %2$L;`,
+      `INSERT INTO public.lesson_teachers(lesson_id, teacher_id)
+            VALUES (%1$L, %2$L) RETURNING lesson_id, teacher_id;`,
       lessonId,
       teacherId,
     );
-    await client.query(query);
+    return (await client.query(query)).rows[0];
   }
   async updateStudentVisitToLesson(
     lessonId: number,
@@ -64,6 +74,6 @@ export class AppCommandRepo {
     const result = await client.query(query);
     if (result.rowCount < 1) return null;
     console.log(result.rows);
-    return result.rows;
+    return result.rows[0];
   }
 }
