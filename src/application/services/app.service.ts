@@ -31,6 +31,7 @@ export class AppService {
     let date = firstDate;
     let count = 0;
     const dateLimit = add(firstDate, { years: 1 });
+    const lessonsIds: number[] = [];
     while (
       this.checkDateLessLastDateAndCountLessLimitAndDateLimit(
         date,
@@ -41,22 +42,17 @@ export class AppService {
       )
     ) {
       if (days.includes(date.getDay())) {
-        console.log(date);
         const lessonId = (
           await this.appCommandRepo.createLesson(title, 0, date)
         ).id;
-        console.log(lessonId);
+        lessonsIds.push(lessonId);
         for (let i = 0; i < teacherIds.length; i++)
-          console.log(
-            await this.appCommandRepo.addTeacherToLesson(
-              lessonId,
-              teacherIds[i],
-            ),
-          );
+          await this.appCommandRepo.addTeacherToLesson(lessonId, teacherIds[i]);
       }
       date = add(date, { days: 1 });
       count++;
     }
+    return lessonsIds;
   }
   checkDateLessLastDateAndCountLessLimitAndDateLimit(
     date: Date,

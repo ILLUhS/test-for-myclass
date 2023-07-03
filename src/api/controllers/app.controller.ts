@@ -23,16 +23,23 @@ appRouter.post(
   checkLessonsCountOrLastDate,
   errorsValidation,
   async (req: Request, res: Response) => {
-    console.log(
-      await appService.createLessons({
-        teacherIds: req.body.teacherIds,
-        title: req.body.title,
-        days: req.body.days,
-        firstDate: req.body.firstDate,
-        lastDate: req.body.lastDate,
-        lessonsCount: req.body.lessonsCount,
-      }),
-    );
-    return res.sendStatus(201);
+    const result = await appService.createLessons({
+      teacherIds: req.body.teacherIds,
+      title: req.body.title,
+      days: req.body.days,
+      firstDate: req.body.firstDate,
+      lastDate: req.body.lastDate,
+      lessonsCount: req.body.lessonsCount,
+    });
+    if (!result)
+      return res.status(400).json({
+        errorsMessages: [
+          {
+            message: 'teacherIds or interval date invalid',
+            field: 'teacherIds or lastDate',
+          },
+        ],
+      });
+    return res.status(201).json(result);
   },
 );
