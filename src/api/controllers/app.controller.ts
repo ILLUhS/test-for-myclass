@@ -3,6 +3,7 @@ import {
   checkDays,
   checkFirstDate,
   checkLessonsCountOrLastDate,
+  checkQueryParams,
   checkTeacherIds,
   checkTitle,
   errorsValidation,
@@ -11,7 +12,7 @@ import { appService } from '../../dependency-injection/ioc-container';
 
 export const appRouter = Router({});
 
-appRouter.get('/', async (req: Request, res: Response) => {
+appRouter.get('/', checkQueryParams, async (req: Request, res: Response) => {
   return res.sendStatus(200);
 });
 appRouter.post(

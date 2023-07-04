@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify';
 import { AppCommandRepo } from '../../infrastructure/repositories/app-command.repo';
-import { LessonCreateDto } from '../../types';
+import { LessonCreateDtoType } from '../../types';
 import { add, isWithinInterval } from 'date-fns';
 
 @injectable()
 export class AppService {
   constructor(@inject(AppCommandRepo) private appCommandRepo: AppCommandRepo) {}
-  async createLessons(lessonsDto: LessonCreateDto) {
+  async createLessons(lessonsDto: LessonCreateDtoType) {
     const { teacherIds, title, days, firstDate, lessonsCount } = lessonsDto;
     let { lastDate } = lessonsDto;
     //check teachers with current ids is exists
@@ -62,8 +62,11 @@ export class AppService {
     currentCount: number,
   ) {
     if (lastDate)
-      return date <= lastDate && currentCount <= 300 && date <= dateLimit;
-    else if (lessonsCount) return currentCount <= 300 && date <= dateLimit;
+      return date <= lastDate && currentCount < 300 && date <= dateLimit;
+    else if (lessonsCount)
+      return (
+        currentCount < lessonsCount && currentCount < 300 && date <= dateLimit
+      );
   }
   checkIntervalBetweenFirstAndLastDate(
     firstDate: Date,
