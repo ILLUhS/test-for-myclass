@@ -1,9 +1,14 @@
 import { Request, Response, Router } from 'express';
 import {
+  checkDate,
   checkDays,
   checkFirstDate,
   checkLessonsCountOrLastDate,
-  checkQueryParams,
+  checkLessonsPerPage,
+  checkPage,
+  checkQueryTeacherIds,
+  checkStatus,
+  checkStudentsCount,
   checkTeacherIds,
   checkTitle,
   errorsValidation,
@@ -14,9 +19,15 @@ export const appRouter = Router({});
 
 appRouter.get(
   '/',
-  checkQueryParams,
+  checkPage,
+  checkLessonsPerPage,
+  checkDate,
+  checkStatus,
+  checkStudentsCount,
+  checkQueryTeacherIds,
   errorsValidation,
   async (req: Request, res: Response) => {
+    console.log(req.query.page, req.query.date, req.query.studentsCount);
     return res.sendStatus(200);
   },
 );

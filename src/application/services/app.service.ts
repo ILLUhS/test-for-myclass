@@ -9,14 +9,6 @@ export class AppService {
   async createLessons(lessonsDto: LessonCreateDtoType) {
     const { teacherIds, title, days, firstDate, lessonsCount } = lessonsDto;
     let { lastDate } = lessonsDto;
-    //check teachers with current ids is exists
-    let teacher = null;
-    let i = 0;
-    do {
-      teacher = await this.appCommandRepo.findTeacherById(teacherIds[i]);
-      i++;
-    } while (teacher && i < teacherIds.length);
-    if (!teacher) return null;
     if (lastDate) {
       //проверка, что все указанные дни недели укладываются в интервал
       if (
@@ -86,5 +78,14 @@ export class AppService {
       start: firstDate,
       end: lastDate,
     });
+  }
+  async teacherByIds(teacherIds: number[]) {
+    let teacher = null;
+    let i = 0;
+    do {
+      teacher = await this.appCommandRepo.findTeacherById(teacherIds[i]);
+      i++;
+    } while (teacher && i < teacherIds.length);
+    return !!teacher;
   }
 }
