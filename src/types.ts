@@ -14,10 +14,10 @@ export type LessonCreateDtoType = {
   lastDate?: Date;
 };
 export type QueryParamsType = {
-  date: Date[] | null;
-  status: number | null;
-  teacherIds: number[] | null;
-  studentsCount: number | null;
-  page: number;
-  lessonsPerPage: number;
+  date: Date[] | any;
+  status: number | any;
+  teacherIds: number[] | any;
+  studentsCount: number[] | any;
+  page: number | any;
+  lessonsPerPage: number | any;
 };

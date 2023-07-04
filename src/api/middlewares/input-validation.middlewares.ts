@@ -21,7 +21,8 @@ const checkTeacherIdsIsExist: CustomValidator = async (
 const toIntArray: CustomSanitizer = async (value) => {
   return String(value)
     .split(',')
-    .map((v) => Number(v));
+    .map((v) => Number(v))
+    .sort();
 };
 //body validation
 export const checkLessonsCountOrLastDate = async (
@@ -113,7 +114,7 @@ export const checkDate = query('date')
       );
     value = String(value).split(',');
     if (temp && temp.length <= 2 && temp.length === value.length) {
-      return temp.map((r) => new Date(r));
+      return temp.sort(); //.map((r) => new Date(r));
     } else return null;
   })
   .isArray();

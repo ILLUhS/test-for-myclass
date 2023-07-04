@@ -13,7 +13,11 @@ import {
   checkTitle,
   errorsValidation,
 } from '../middlewares/input-validation.middlewares';
-import { appService } from '../../dependency-injection/ioc-container';
+import {
+  appQueryRepo,
+  appService,
+} from '../../dependency-injection/ioc-container';
+import { QueryParamsType } from '../../types';
 
 export const appRouter = Router({});
 
@@ -27,8 +31,15 @@ appRouter.get(
   checkQueryTeacherIds,
   errorsValidation,
   async (req: Request, res: Response) => {
-    console.log(req.query.page, req.query.date, req.query.studentsCount);
-    return res.sendStatus(200);
+    const searchParams: QueryParamsType = {
+      date: req.query.date,
+      teacherIds: req.query.teacherIds,
+      status: req.query.status,
+      studentsCount: req.query.studentsCount,
+      page: req.query.page,
+      lessonsPerPage: req.query.lessonsPerPage,
+    };
+    return res.status(200).json(appQueryRepo.getLessons(searchParams));
   },
 );
 appRouter.post(
