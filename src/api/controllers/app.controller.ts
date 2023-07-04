@@ -12,9 +12,14 @@ import { appService } from '../../dependency-injection/ioc-container';
 
 export const appRouter = Router({});
 
-appRouter.get('/', checkQueryParams, async (req: Request, res: Response) => {
-  return res.sendStatus(200);
-});
+appRouter.get(
+  '/',
+  checkQueryParams,
+  errorsValidation,
+  async (req: Request, res: Response) => {
+    return res.sendStatus(200);
+  },
+);
 appRouter.post(
   '/lessons',
   checkTeacherIds,

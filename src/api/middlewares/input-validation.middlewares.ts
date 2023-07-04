@@ -8,6 +8,7 @@ import {
 import { ErrorsType } from '../../types';
 
 const errors: ErrorsType = { errorsMessages: [] };
+const statusValue = [0, 1];
 export const checkLessonsCountOrLastDate = async (
   req: Request,
   res: Response,
@@ -39,7 +40,7 @@ export const checkLessonsCountOrLastDate = async (
       .match(
         /(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)/g,
       );
-    if (!result || new Date(result[0]) < new Date())
+    if (!result || result.length > 1 || new Date(result[0]) < new Date())
       errors.errorsMessages.push({
         message: 'lastDate must be Date',
         field: 'lastDate',
@@ -110,9 +111,9 @@ export const checkQueryParams = async (
   res: Response,
   next: NextFunction,
 ) => {
-  let date = req.query.date || null;
-  const status = req.query.status || null;
-  const teacherIds = req.query.teacherIds || null;
+  let date = null;
+  let status = null;
+  let teacherIds = null;
   const studentsCount = req.query.studentsCount || null;
   const page = req.query.page || 1;
   const lessonsPerPage = req.query.lessonsPerPage || 5;
@@ -124,27 +125,43 @@ export const checkQueryParams = async (
     page,
     lessonsPerPage,
   });
-  if (typeof date === 'string') {
-    date = date.split(',');
-    if (date.length <= 2) {
-      date.forEach((d) => {
-        const result = Date.parse(d);
-        if (isNaN(result) || result < Date.now())
-          errors.errorsMessages.push({
-            message: 'lastDate must be Date',
-            field: 'lastDate',
-          });
+  if (req.query.date) {
+    const temp = String(req.query.date)
+      .trim()
+      .match(
+        /(19|20)\d\d-((0[1-9]|1[012])-(0[1-9]|[12]\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)/g,
+      );
+    if (!temp || temp.length > 2) {
+      errors.errorsMessages.push({
+        message: 'date must be Date',
+        field: 'date',
       });
-    }
+    } else date = temp.map((r) => new Date(r));
   }
+  if (req.query.status) {
+    const temp = Number(req.query.status);
+    if (isNaN(temp) || !statusValue.includes(temp))
+      errors.errorsMessages.push({
+        message: 'status must be 1 or 0',
+        field: 'status',
+      });
+    else status = temp;
+  }
+  if (req.query.teacherIds) {
+    const temp = String(req.query.teacherIds)
+      .split(',')
+      .map((t) => Number(t));
+    if (!temp.every((t) => !isNaN(t) && typeof t === 'number'))
+      errors.errorsMessages.push({
+        message: 'teacherIds must number',
+        field: 'teacherIds',
+      });
+    else teacherIds = temp;
+  }
+
   /*const params: QueryParamsType = {
-    searchNameTerm: String(searchNameTerm),
-    searchLoginTerm: String(searchLoginTerm),
-    searchEmailTerm: String(searchEmailTerm),
-    pageNumber: Number(pageNumber),
-    pageSize: Number(pageSize),
-    sortBy: String(sortBy),
-    sortDirection: sortDirection,
+    date,
+    status,
   };
   if (params.pageNumber < 1) return res.status(400).send('Invalid pageNumber');
   if (params.pageSize < 1) return res.status(400).send('Invalid pageSize');
