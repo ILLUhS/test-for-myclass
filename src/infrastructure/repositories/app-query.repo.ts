@@ -41,23 +41,23 @@ export class AppQueryRepo {
               l.id,
               title,
               status,
-              TO_CHAR(date_lesson::date,'yyyy-mm-dd'),
+              TO_CHAR(date_lesson::date,'yyyy-mm-dd') as date,
               SUM(sls.visit) as "visitCount",
-              JSONB_AGG(
-                    JSON_BUILD_OBJECT(
+              JSON_AGG(
+                      DISTINCT JSONB_BUILD_OBJECT(
                         'id', sls.id,
                         'name', sls.name,
                         'visit', sls.visit
                     )
               ) as students,
-              JSONB_AGG(
-                    JSON_BUILD_OBJECT(
+              JSON_AGG(
+                      DISTINCT JSONB_BUILD_OBJECT(
                         'id', tlt.id,
                         'name', tlt.name
                     )
               ) as teachers
             FROM public.lessons as l
-            JOIN(SELECT id, name, ls.visit, ls.lesson_id
+            LEFT JOIN(SELECT id, name, ls.visit, ls.lesson_id
                     FROM public.students as s
                     JOIN public.lesson_students as ls
                     ON s.id = ls.student_id) as sls
@@ -84,7 +84,29 @@ export class AppQueryRepo {
       lessonsPerPage,
       (page - 1) * lessonsPerPage,
     );
-    console.log(query);
-    console.log((await client.query(query)).rows);
+    const result = (await client.query(query)).rows;
+    return result.map((l) => {
+      return {
+        id: l.id,
+        title: l.title,
+        status: Number(l.status),
+        date: l.date,
+        visitCount: Number(l.visitCount),
+        students: l.students.map((s) => {
+          if (!s.id) return {};
+          return {
+            id: s.id,
+            name: s.name,
+            visit: s.visit,
+          };
+        }),
+        teachers: l.teachers.map((t) => {
+          return {
+            id: t.id,
+            name: t.name,
+          };
+        }),
+      };
+    });
   }
 }

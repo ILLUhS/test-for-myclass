@@ -39,7 +39,7 @@ appRouter.get(
       page: req.query.page,
       lessonsPerPage: req.query.lessonsPerPage,
     };
-    return res.status(200).json(appQueryRepo.getLessons(searchParams));
+    return res.status(200).json(await appQueryRepo.getLessons(searchParams));
   },
 );
 appRouter.post(
@@ -63,8 +63,8 @@ appRouter.post(
       return res.status(400).json({
         errorsMessages: [
           {
-            message: 'teacherIds or interval date invalid',
-            field: 'teacherIds or lastDate',
+            message: 'date invalid',
+            field: 'days or lastDate',
           },
         ],
       });
